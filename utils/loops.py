@@ -8,8 +8,8 @@ def train(net, dataloader, criterion, optimizer, scaler, Ncrop=True):
     net = net.train()
     loss_tr, correct_count, n_samples = 0.0, 0.0, 0.0
     iters = len(dataloader)  # number of batches, not images
-
-    for i, data in tqdm(list(enumerate(dataloader))):
+    pbar = tqdm(dataloader,leave=False,position=1,colour='green')
+    for i, data in enumerate(pbar):
         inputs, labels = data
         inputs, labels = inputs.to(device), labels.to(device)
 
@@ -38,11 +38,10 @@ def train(net, dataloader, criterion, optimizer, scaler, Ncrop=True):
             _, preds = torch.max(outputs.data, 1)
             correct_count += (preds == labels).sum().item()
             n_samples += labels.size(0)
-
     acc = 100 * correct_count / n_samples
     loss = loss_tr / n_samples
 
-    return acc,
+    return acc, loss
 
 
 def evaluate(net, dataloader, criterion, Ncrop=True):

@@ -12,35 +12,20 @@ POSSIBLE_EMOTIONS = ['surprised', 'angry', 'neutral', 'sad', 'happy', 'disgusted
 class KDEF(Dataset):
     def __init__(
                     self,
+                    df: pd.DataFrame,
                     transform=None,
-                    csv_path: str = CSV_PATH,
                     img_path: str = IMG_PATH,
-                    only_straight: bool = False,
-                    ids_to_take: List[int] = None,
-                    emotions_to_take: List[str] = None
                  ):
+        """
+        :param df: A pandas df of desired subset of the kdef.csv file according to the experiment.
+        :param transform: A transformation to apply to each image in the Dataset.
+        :param img_path : A path to the kdef root folder to access each image.
+        :returns: a PyTorch compatible kdef dataset to train and test on.
+        """
 
-        df = pd.read_csv(csv_path)
-
-        # If needed take only straight posed images
-        if only_straight:
-            df = df[df['angle'] == 'S']
-
-
-        # Take the given ids to dataset
-        if ids_to_take is not None:
-            df = df[df['actor_id'].isin(ids_to_take)]
-
-        # Take the given emotions to dataset
-        if emotions_to_take is not None:
-            # First, check for error in values and raise exception if found
-            for emotion in emotions_to_take:
-                if emotion not in POSSIBLE_EMOTIONS:
-                    raise ValueError(f"every element in emotions_to_take should be in: {POSSIBLE_EMOTIONS}\n"
-                                     f"but got {emotion}")
-            df = df[df['emotion'].isin(emotions_to_take)]
-        df.reset_index(drop=True, inplace=True)
-        self.df = df
+        self.df = df.copy()
+        # Make sure indexing works fine after taking the relevant rows.
+        self.df.reset_index(drop=True, inplace=True)
         self.img_path: str = img_path
         self.transform = transform
 

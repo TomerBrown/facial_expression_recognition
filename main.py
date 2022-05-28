@@ -11,6 +11,7 @@ from tqdm import tqdm
 from utils import logger, hparams
 from utils.loops import train, evaluate
 from utils.checkpoint import save
+from KDEF_Dataset import IMG_PATH, CSV_PATH
 
 MODEL_PATH = 'models/VGGNet'
 warnings.filterwarnings("ignore")
@@ -19,7 +20,6 @@ if __name__ == '__main__':
 
     # Hyper Parameters (What was used in the paper):
     hps = hparams.setup_hparams(["network=VGGNet", "name=vgg_fine_tuned_kdef"])
-    print(hps)
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     logger = logger.Logger()
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     vgg_model.load_state_dict(checkpoint["params"])
 
     # Get the dataloaders
-    train_dataloader, val_dataloader, test_dataloader = get_dataloaders_by_ids(train_proportion=[0.6,0.2,0.2])
+    train_dataloader, val_dataloader, test_dataloader = get_dataloaders_by_ids(IMG_PATH, CSV_PATH, train_proportion=[0.6,0.2,0.2])
 
     # Training methods and criterion
     learning_rate = float(hps['lr'])
@@ -42,7 +42,8 @@ if __name__ == '__main__':
 
     best_acc = 0.0
     print("Training", hps['name'], "on", device)
-    for epoch in tqdm(range(hps['start_epoch'], hps['n_epochs'])):
+    pbar = tqdm(range(hps['start_epoch'], hps['n_epochs']),position=0 , leave=False , colour='blue')
+    for epoch in pbar:
 
         acc_tr, loss_tr = train(vgg_model, train_dataloader, criterion, optimizer, scaler)
         logger.loss_train.append(loss_tr)
@@ -65,7 +66,7 @@ if __name__ == '__main__':
             save(vgg_model, logger, hps, epoch + 1)
             logger.save_plt(hps)
 
-        print('Epoch %2d' % (epoch + 1),
+        pbar.set_description('Epoch %2d' % (epoch + 1),
               'Train Accuracy: %2.4f %%' % acc_tr,
               'Val Accuracy: %2.4f %%' % acc_v,
               sep='\t\t')
