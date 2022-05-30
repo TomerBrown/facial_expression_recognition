@@ -66,3 +66,5 @@ def evaluate (vgg_model,train_df, val_df, test_df, name, Ncrop=True):
 
     with open(os.path.join(path,'results.txt'), 'w') as f:
         f.write(s)
+
+    torch.save(vgg_model.state_dict(), os.path.join(path ,'model'))
