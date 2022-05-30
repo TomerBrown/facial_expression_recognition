@@ -35,7 +35,7 @@ def fine_tune(train_df: pd.DataFrame, val_df: pd.DataFrame, name: str, n_epochs:
     learning_rate = float(hps['lr'])
     optimizer = torch.optim.SGD(vgg_model.parameters(), lr=learning_rate, momentum=0.9, nesterov=True,
                                 weight_decay=0.0001)
-    scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.75, patience=5, verbose=True)
+    scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.75, patience=5)
     criterion = nn.CrossEntropyLoss()
     scaler = GradScaler()
 
