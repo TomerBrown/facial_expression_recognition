@@ -70,4 +70,4 @@ def fine_tune(train_df: pd.DataFrame, val_df: pd.DataFrame, name: str, n_epochs:
               'Val Accuracy: %2.4f %%' % acc_v])
         pbar.set_description(s)
 
-        return vgg_model
+    return vgg_model
