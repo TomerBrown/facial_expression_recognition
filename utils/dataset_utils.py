@@ -74,3 +74,32 @@ def get_dataloaders_by_ids(img_path: str, csv_path: str, train_proportion: [int]
     test_dataloader = DataLoader(kdef_test, batch_size=64, shuffle=False, num_workers=n_workers)
 
     return train_dataloader, val_dataloader, test_dataloader
+
+
+def get_train_val_dataloaders(train_df : pd.DataFrame, val_df : pd.DataFrame):
+
+    train_transform, test_transform = get_transofrms()
+
+    kdef_train = KDEF(train_df, transform=train_transform)
+    kdef_val = KDEF(val_df, transform=test_transform)
+
+    # To deal with some issue that occurred on my cpu
+    n_workers = 4 if torch.cuda.is_available() else 0
+
+    # Create Dataloaders
+    train_dataloader = DataLoader(kdef_train, batch_size=64, shuffle=True, num_workers=n_workers)
+    val_dataloader = DataLoader(kdef_val, batch_size=64, shuffle=False, num_workers=n_workers)
+
+    return train_dataloader, val_dataloader
+
+def get_test_dataloader(test_df : pd.DataFrame):
+
+    _, test_transform = get_transofrms()
+    kdef_test = KDEF(test_df, transform=test_transform)
+
+    # To deal with some issue that occurred on my cpu
+    n_workers = 4 if torch.cuda.is_available() else 0
+
+    test_dataloader = DataLoader(kdef_test, batch_size=1, shuffle=False, num_workers=n_workers)
+
+    return test_dataloader
