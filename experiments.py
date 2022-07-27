@@ -16,8 +16,7 @@ def experiment1():
     # Actors Id's are 1-35
     ids = [i+1 for i in range(70)]
     random.shuffle(ids)
-
-    train_por, val_por, test_por = 0.6, 0.2, 0.2
+    train_por, val_por, test_por =  4/7, 1/7 , 2/7
     border1, border2 = int(35*train_por) , int(35*(train_por + val_por))
 
     train_ind = ids[:border1]
@@ -46,7 +45,7 @@ def experiment2():
     indices = [i+1 for i in range(len(df))]
     random.shuffle(indices)
 
-    train_por, val_por, test_por = 0.6, 0.2, 0.2
+    train_por, val_por, test_por =  4/7, 1/7 , 2/7
     border1, border2 = int(len(df)*train_por) , int(len(df)*(train_por + val_por))
 
     train_ind = indices[:border1]
